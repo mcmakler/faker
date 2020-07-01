@@ -43,7 +43,7 @@ type BStruct struct {
 // And it will fill the data based on its data-type.
 func Example_withoutTag() {
 	a := SomeStruct{}
-	err := faker.FakeData(&a)
+	err := faker.FakeData(&a, true)
 	if err != nil {
 		fmt.Println(err)
 	}

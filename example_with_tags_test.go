@@ -69,7 +69,7 @@ type SomeStructWithTags struct {
 func Example_withTags() {
 
 	a := SomeStructWithTags{}
-	err := faker.FakeData(&a)
+	err := faker.FakeData(&a, true)
 	if err != nil {
 		fmt.Println(err)
 	}

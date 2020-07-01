@@ -30,7 +30,7 @@ func Example_withTagsLengthAndBoundary() {
 
 	_ = faker.SetRandomMapAndSliceSize(20) // Random generated map or array size wont exceed 20...
 	a := SomeStruct{}
-	_ = faker.FakeData(&a)
+	_ = faker.FakeData(&a, true)
 	fmt.Printf("%+v", a)
 	// Result:
 	/*

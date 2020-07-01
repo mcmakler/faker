@@ -18,7 +18,7 @@ func Example_withTagsSliceLength() {
 
 	_ = faker.SetRandomMapAndSliceSize(20) // If no slice_len is set, this sets the max of the random size
 	a := SomeStruct{}
-	_ = faker.FakeData(&a)
+	_ = faker.FakeData(&a, true)
 	fmt.Printf("%+v", a)
 	// Result:
 	/*

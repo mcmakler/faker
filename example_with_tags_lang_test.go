@@ -17,7 +17,7 @@ func Example_withTagsLang() {
 
 	a := SomeStruct{}
 	_ = faker.SetRandomStringLength(5)
-	_ = faker.FakeData(&a)
+	_ = faker.FakeData(&a, true)
 	fmt.Printf("%+v", a)
 	// Result:
 	/*

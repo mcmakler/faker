@@ -310,7 +310,7 @@ type NotTaggedStruct struct {
 
 func TestFakerData(t *testing.T) {
 	var a SomeStruct
-	err := FakeData(&a)
+	err := FakeData(&a, true)
 
 	if err != nil {
 		t.Error("Expected NoError")
@@ -319,7 +319,7 @@ func TestFakerData(t *testing.T) {
 	fmt.Printf("%+v\n", a)
 
 	var b TaggedStruct
-	err = FakeData(&b)
+	err = FakeData(&b, true)
 
 	if err != nil {
 		t.Error("Expected NoError, but Got Err: ", err)
@@ -346,7 +346,7 @@ func TestCustomFakerOnUnsupportedMapStringInterface(t *testing.T) {
 	}
 
 	var sample = new(Sample)
-	err = FakeData(sample)
+	err = FakeData(sample, true)
 	if err != nil {
 		t.Error("Expected NoError, but Got Err:", err)
 	}
@@ -366,14 +366,14 @@ func TestUnsuportedMapStringInterface(t *testing.T) {
 		Map map[string]interface{}
 	}
 	var sample = new(Sample)
-	if err := FakeData(sample); err == nil {
+	if err := FakeData(sample, true); err == nil {
 		t.Error("Expected Error. But got nil")
 	}
 }
 
 func TestSetDataIfArgumentNotPtr(t *testing.T) {
 	temp := struct{}{}
-	if "Not a pointer value" != FakeData(temp).Error() {
+	if "Not a pointer value" != FakeData(temp, true).Error() {
 		t.Error("Expected in arguments not ptr")
 	}
 }
@@ -381,7 +381,7 @@ func TestSetDataIfArgumentNotPtr(t *testing.T) {
 func TestSetDataIfArgumentNotHaveReflect(t *testing.T) {
 	temp := func() {}
 
-	if err := FakeData(temp); err == nil {
+	if err := FakeData(temp, true); err == nil {
 		t.Error("Exptected error but got nil")
 	}
 }
@@ -391,7 +391,7 @@ func TestSetDataErrorDataParseTagStringType(t *testing.T) {
 		Test string `faker:"test"`
 	}{}
 	fmt.Printf("%+v ", temp)
-	if err := FakeData(temp); err == nil {
+	if err := FakeData(temp, true); err == nil {
 		t.Error("Exptected error Unsupported tag, but got nil")
 	}
 }
@@ -401,7 +401,7 @@ func TestSetDataErrorDataParseTagIntType(t *testing.T) {
 		Test int `faker:"test"`
 	}{}
 
-	if err := FakeData(temp); err == nil {
+	if err := FakeData(temp, true); err == nil {
 		t.Error("Expected error Unsupported tag, but got nil")
 	}
 }
@@ -415,7 +415,7 @@ func TestSetRandomStringLength(t *testing.T) {
 	if err := SetRandomStringLength(strLen); err != nil {
 		t.Error("SetRandomStringLength method is corrupted.")
 	}
-	if err := FakeData(&someStruct); err != nil {
+	if err := FakeData(&someStruct, true); err != nil {
 		t.Error("Fake data generation has failed")
 	}
 	if utfLen(someStruct.StringValue) > strLen {
@@ -426,7 +426,7 @@ func TestSetRandomStringLength(t *testing.T) {
 func TestSetStringLang(t *testing.T) {
 	someStruct := SomeStruct{}
 	SetStringLang(LangENG)
-	if err := FakeData(&someStruct); err != nil {
+	if err := FakeData(&someStruct, true); err != nil {
 		t.Error("Fake data generation has failed")
 	}
 }
@@ -440,7 +440,7 @@ func TestSetRandomNumberBoundaries(t *testing.T) {
 	if err := SetRandomNumberBoundaries(boundary.start, boundary.end); err != nil {
 		t.Error("SetRandomNumberBoundaries method is corrupted.")
 	}
-	if err := FakeData(&someStruct); err != nil {
+	if err := FakeData(&someStruct, true); err != nil {
 		t.Error("Fake data generation has failed")
 	}
 	if someStruct.Inta >= boundary.end || someStruct.Inta < boundary.start {
@@ -457,7 +457,7 @@ func TestSetRandomMapAndSliceSize(t *testing.T) {
 	if err := SetRandomMapAndSliceSize(size); err != nil {
 		t.Error("SetRandomMapAndSliceSize method is corrupted.")
 	}
-	if err := FakeData(&someStruct); err != nil {
+	if err := FakeData(&someStruct, true); err != nil {
 		t.Error("Fake data generation has failed")
 	}
 	if len(someStruct.MapStringStruct) > size || len(someStruct.SBool) > size {
@@ -469,7 +469,7 @@ func TestSetNilIfLenIsZero(t *testing.T) {
 	someStruct := SomeStruct{}
 	SetNilIfLenIsZero(true)
 	testRandZero = true
-	if err := FakeData(&someStruct); err != nil {
+	if err := FakeData(&someStruct, true); err != nil {
 		t.Error("Fake data generation has failed")
 	}
 	if someStruct.MapStringString != nil && someStruct.MapStringStruct != nil &&
@@ -486,7 +486,7 @@ func TestBoundaryAndLen(t *testing.T) {
 	iterate := 10
 	someStruct := SomeStructWithLen{}
 	for i := 0; i < iterate; i++ {
-		if err := FakeData(&someStruct); err != nil {
+		if err := FakeData(&someStruct, true); err != nil {
 			t.Error(err)
 		}
 		if err := validateRange(int(someStruct.Int8)); err != nil {
@@ -551,14 +551,14 @@ func TestWrongBoundaryAndLen(t *testing.T) {
 		Value int `faker:"boundary_start=a, boundary_end=b"`
 	}
 	s := SomeStruct{}
-	if err := FakeData(&s); err == nil {
+	if err := FakeData(&s, true); err == nil {
 		t.Error(err)
 	}
 }
 
 func TestLang(t *testing.T) {
 	someStruct := SomeStructWithLang{}
-	if err := FakeData(&someStruct); err != nil {
+	if err := FakeData(&someStruct, true); err != nil {
 		t.Error("Fake data generation has failed")
 	}
 
@@ -588,7 +588,7 @@ func TestLangWithWrongLang(t *testing.T) {
 	}
 
 	s := SomeStruct{}
-	err := FakeData(&s)
+	err := FakeData(&s, true)
 
 	if err != nil {
 		t.Error(err.Error())
@@ -634,7 +634,7 @@ func TestSliceLen(t *testing.T) {
 		String3 []string `faker:"slice_len=10"`
 	}
 	var someStruct SomeStruct
-	if err := FakeData(&someStruct); err != nil {
+	if err := FakeData(&someStruct, true); err != nil {
 		t.Error("Fake data generation has failed")
 	}
 
@@ -655,7 +655,7 @@ func TestWrongSliceLen(t *testing.T) {
 	}
 
 	s := SomeStruct{}
-	err := FakeData(&s)
+	err := FakeData(&s, true)
 
 	if err == nil {
 		t.Error("An error should be thrown for the wrong slice_len")
@@ -664,12 +664,12 @@ func TestWrongSliceLen(t *testing.T) {
 
 func TestExtractingSliceLenFromTag(t *testing.T) {
 	for _, tag := range sliceLenCorrectTags {
-		if _, err := extractSliceLengthFromTag(tag); err != nil {
+		if _, err := extractSliceLengthFromTag(tag, true); err != nil {
 			t.Error(err.Error())
 		}
 	}
 	for _, tag := range sliceLenIncorrectTags {
-		if _, err := extractSliceLengthFromTag(tag); err == nil {
+		if _, err := extractSliceLengthFromTag(tag, true); err == nil {
 			t.Errorf("Extracting should have thrown an error for tag %s", tag)
 		}
 	}
@@ -677,7 +677,7 @@ func TestExtractingSliceLenFromTag(t *testing.T) {
 
 func TestLangWithLen(t *testing.T) {
 	someStruct := SomeStructWithLenAndLang{}
-	if err := FakeData(&someStruct); err != nil {
+	if err := FakeData(&someStruct, true); err != nil {
 		t.Error("Fake data generation has failed")
 	}
 
@@ -725,37 +725,37 @@ func TestExtractNumberFromTagFail(t *testing.T) {
 	notSupportedTypeStruct := &struct {
 		Test float32 `faker:"boundary_start=5, boundary_end=10"`
 	}{}
-	if err := FakeData(&notSupportedTypeStruct); err == nil {
+	if err := FakeData(&notSupportedTypeStruct, true); err == nil {
 		t.Error(err)
 	}
 	notSupportedStruct := &struct {
 		Test int `faker:"boundary_start=5"`
 	}{}
-	if err := FakeData(&notSupportedStruct); err == nil {
+	if err := FakeData(&notSupportedStruct, true); err == nil {
 		t.Error(err)
 	}
 	wrongFormatStruct := &struct {
 		Test int `faker:"boundary_start=5 boundary_end=10"`
 	}{}
-	if err := FakeData(&wrongFormatStruct); err == nil {
+	if err := FakeData(&wrongFormatStruct, true); err == nil {
 		t.Error(err)
 	}
 	startExtractionStruct := &struct {
 		Test int `faker:"boundary_start=asda, boundary_end=10"`
 	}{}
-	if err := FakeData(&startExtractionStruct); err == nil {
+	if err := FakeData(&startExtractionStruct, true); err == nil {
 		t.Error(err)
 	}
 	endExtractionStruct := &struct {
 		Test int `faker:"boundary_start=5, boundary_end=asda"`
 	}{}
-	if err := FakeData(&endExtractionStruct); err == nil {
+	if err := FakeData(&endExtractionStruct, true); err == nil {
 		t.Error(err)
 	}
 	wrongSplitFormatStruct := &struct {
 		Test int `faker:"boundary_start5, boundary_end=10"`
 	}{}
-	if err := FakeData(&wrongSplitFormatStruct); err == nil {
+	if err := FakeData(&wrongSplitFormatStruct, true); err == nil {
 		t.Error(err)
 	}
 }
@@ -764,7 +764,7 @@ func TestUserDefinedStringFail(t *testing.T) {
 	wrongFormatStruct := &struct {
 		Test string `faker:"len=asd"`
 	}{}
-	if err := FakeData(&wrongFormatStruct); err == nil {
+	if err := FakeData(&wrongFormatStruct, true); err == nil {
 		t.Error(err)
 	}
 }
@@ -786,7 +786,7 @@ func validateRange(value int) error {
 
 func TestSetDataWithTagIfFirstArgumentNotPtr(t *testing.T) {
 	temp := struct{}{}
-	if setDataWithTag(reflect.ValueOf(temp), "").Error() != "Not a pointer value" {
+	if setDataWithTag(reflect.ValueOf(temp), "", true).Error() != "Not a pointer value" {
 		t.Error("Expected in arguments not ptr")
 	}
 }
@@ -794,7 +794,7 @@ func TestSetDataWithTagIfFirstArgumentNotPtr(t *testing.T) {
 func BenchmarkFakerDataNOTTagged(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		a := NotTaggedStruct{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -804,7 +804,7 @@ func BenchmarkFakerDataNOTTagged(b *testing.B) {
 func BenchmarkFakerDataTagged(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		a := TaggedStruct{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -849,14 +849,14 @@ type PointerC struct {
 
 func TestStructPointer(t *testing.T) {
 	a := new(PointerStructB)
-	err := FakeData(a)
+	err := FakeData(a, true)
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
 	}
 	fmt.Printf(" A value: %+v , Somestruct Value: %+v  ", a, a)
 
 	tagged := new(PointerC)
-	err = FakeData(tagged)
+	err = FakeData(tagged, true)
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
 	}
@@ -876,7 +876,7 @@ type CustomTypeStruct struct {
 
 func TestCustomType(t *testing.T) {
 	a := new(CustomTypeStruct)
-	err := FakeData(a)
+	err := FakeData(a, true)
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
 	}
@@ -896,7 +896,7 @@ func (s SampleStruct) GetName() string {
 func TestUnexportedFieldStruct(t *testing.T) {
 	// This test is to ensure that the faker won't panic if trying to fake data on struct that has unexported field
 	a := new(SampleStruct)
-	err := FakeData(a)
+	err := FakeData(a, true)
 
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
@@ -907,7 +907,7 @@ func TestUnexportedFieldStruct(t *testing.T) {
 func TestPointerToCustomScalar(t *testing.T) {
 	// This test is to ensure that the faker won't panic if trying to fake data on struct that has field
 	a := new(CustomInt)
-	err := FakeData(a)
+	err := FakeData(a, true)
 
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
@@ -922,7 +922,7 @@ type PointerCustomIntStruct struct {
 func TestPointerToCustomIntStruct(t *testing.T) {
 	// This test is to ensure that the faker won't panic if trying to fake data on struct that has field
 	a := new(PointerCustomIntStruct)
-	err := FakeData(a)
+	err := FakeData(a, true)
 
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
@@ -941,7 +941,7 @@ func TestSkipField(t *testing.T) {
 
 	a.ShouldBeSkippedFilled = 10
 
-	err := FakeData(&a)
+	err := FakeData(&a, true)
 
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
@@ -981,7 +981,7 @@ func TestExtend(t *testing.T) {
 			t.Error("Expected Not Error, But Got: ", err)
 		}
 
-		err = FakeData(&a)
+		err = FakeData(&a, true)
 
 		if err != nil {
 			t.Error("Expected Not Error, But Got: ", err)
@@ -1007,7 +1007,7 @@ func TestExtend(t *testing.T) {
 			t.Error("Expected Not Error, But Got: ", err)
 		}
 
-		err = FakeData(&a)
+		err = FakeData(&a, true)
 
 		if err != nil {
 			t.Error("Expected Not Error, But Got: ", err)
@@ -1033,7 +1033,7 @@ func TestExtend(t *testing.T) {
 			t.Error("Expected Not Error, But Got: ", err)
 		}
 
-		err = FakeData(&a)
+		err = FakeData(&a, true)
 
 		if err != nil {
 			t.Error("Expected Not Error, But Got: ", err)
@@ -1066,7 +1066,7 @@ func TestExtend(t *testing.T) {
 			t.Error("Expected Not Error, But Got: ", err)
 		}
 
-		err = FakeData(&a)
+		err = FakeData(&a, true)
 
 		if err != nil {
 			t.Error("Expected Not Error, But Got: ", err)
@@ -1132,7 +1132,7 @@ func TestTagWithPointer(t *testing.T) {
 		t.Error("Expected Not Error, But Got: ", err)
 	}
 	var sample TestStruct
-	err = FakeData(&sample)
+	err = FakeData(&sample, true)
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
 	}
@@ -1167,7 +1167,7 @@ func TestItOverwritesDefaultValueIfKeepIsSet(t *testing.T) {
 
 	test := TestStruct{}
 
-	err := FakeData(&test)
+	err := FakeData(&test, true)
 	if err != nil {
 		t.Error("expected not error, but got: ", err)
 	}
@@ -1190,7 +1190,7 @@ func TestItKeepsStructPropertyWhenTagKeepIsSet(t *testing.T) {
 		Map:       m,
 	}
 
-	err := FakeData(&test)
+	err := FakeData(&test, true)
 	if err != nil {
 		t.Error("expected not error, but got: ", err)
 	}
@@ -1226,7 +1226,7 @@ func TestItThrowsAnErrorWhenKeepIsUsedOnIncomparableType(t *testing.T) {
 	withArray := TypeStructWithArray{}
 
 	for _, item := range []interface{}{withArray, withStruct, withSlice} {
-		err := FakeData(&item)
+		err := FakeData(&item, true)
 		if err == nil {
 			t.Errorf("expected error, but got nil")
 		}
@@ -1240,7 +1240,7 @@ func TestItThrowsAnErrorWhenPointerToInterfaceIsUsed(t *testing.T) {
 
 	interfacePtr := PtrToInterface{}
 
-	err := FakeData(&interfacePtr)
+	err := FakeData(&interfacePtr, true)
 	if err == nil {
 		t.Errorf("expected error, but got nil")
 	}
@@ -1253,7 +1253,7 @@ func TestItThrowsAnErrorWhenZeroValueWithKeepAndUnsupportedTagIsUsed(t *testing.
 
 	val := String{}
 
-	err := FakeData(&val)
+	err := FakeData(&val, true)
 	if err == nil {
 		t.Errorf("expected error, but got nil")
 	}
@@ -1267,7 +1267,7 @@ func TestUnique(t *testing.T) {
 
 	for i := 0; i < 50; i++ {
 		val := UniqueStruct{}
-		err := FakeData(&val)
+		err := FakeData(&val, true)
 		if err != nil {
 			t.Fatal("can't fake the unique data", err)
 		}
@@ -1295,7 +1295,7 @@ func TestUniqueReset(t *testing.T) {
 
 	for i := 0; i < 20; i++ {
 		val := String{}
-		err := FakeData(&val)
+		err := FakeData(&val, true)
 		if err != nil {
 			t.Fatal("can't fake the unique data", err)
 		}
@@ -1317,7 +1317,7 @@ func TestUniqueFailure(t *testing.T) {
 	length := len(wordList) + 1
 	for i := 0; i < length; i++ {
 		val := String{}
-		err := FakeData(&val)
+		err := FakeData(&val, true)
 		if err != nil {
 			hasError = true
 			break
@@ -1338,7 +1338,7 @@ func TestOneOfTag__GoodInputs(t *testing.T) {
 
 	t.Run("creates one of the desired string values", func(t *testing.T) {
 		a := CustomOneString{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err != nil {
 			t.Errorf("expected no error, but got %v", err)
 		}
@@ -1360,7 +1360,7 @@ func TestOneOfTag__GoodInputs(t *testing.T) {
 	}
 	t.Run("creates only one of the desired string values from many", func(t *testing.T) {
 		a := CustomMultiString{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err != nil {
 			t.Errorf("expected no error, but got %v", err)
 		}
@@ -1387,7 +1387,7 @@ func TestOneOfTag__GoodInputs(t *testing.T) {
 
 	t.Run("should pick one of the number args", func(t *testing.T) {
 		a := CustomOneofInt1{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err != nil {
 			t.Errorf("expected no error, but got %v", err)
 		}
@@ -1409,7 +1409,7 @@ func TestOneOfTag__GoodInputs(t *testing.T) {
 
 	t.Run("correctly picks one of the float32s", func(t *testing.T) {
 		a := CustomFloat1{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err != nil {
 			t.Error("expected no error but got ", err)
 		}
@@ -1427,7 +1427,7 @@ func TestOneOfTag__GoodInputs(t *testing.T) {
 
 	t.Run("correctly picks one of the float64s", func(t *testing.T) {
 		a := CustomFloat6{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err != nil {
 			t.Error("expected no error but got ", err)
 		}
@@ -1456,7 +1456,7 @@ func TestOneOfTag__GoodInputs(t *testing.T) {
 
 	t.Run("Should support all the int types", func(t *testing.T) {
 		a := CustomTypeLotsOfInts{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
@@ -1472,7 +1472,7 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly no args float32", func(t *testing.T) {
 		a := CustomWrongFloat1{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
 		}
@@ -1489,7 +1489,7 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly float32 invalid argument separator", func(t *testing.T) {
 		a := CustomWrongFloat2{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
 		}
@@ -1506,7 +1506,7 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly float32 invalid argument type", func(t *testing.T) {
 		a := CustomWrongFloat3{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Fatal("expected error, but got no error")
 		}
@@ -1523,7 +1523,7 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly float32 only one argument", func(t *testing.T) {
 		a := CustomWrongFloat4{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Fatal("expected error, but got no error")
 		}
@@ -1540,7 +1540,7 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly float32 only one argument", func(t *testing.T) {
 		a := CustomWrongFloat5{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Fatal("expected error, but got no error")
 		}
@@ -1557,7 +1557,7 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly no args float64", func(t *testing.T) {
 		a := CustomWrongFloat7{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
 		}
@@ -1574,7 +1574,7 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly float64 invalid argument separator", func(t *testing.T) {
 		a := CustomWrongFloat8{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
 		}
@@ -1591,7 +1591,7 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly float64 invalid argument type", func(t *testing.T) {
 		a := CustomWrongFloat9{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Fatal("expected error, but got no error")
 		}
@@ -1608,7 +1608,7 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly float64 only one argument", func(t *testing.T) {
 		a := CustomWrongFloat10{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Fatal("expected error, but got no error")
 		}
@@ -1625,7 +1625,7 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly float64 only one argument", func(t *testing.T) {
 		a := CustomWrongFloat11{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Fatal("expected error, but got no error")
 		}
@@ -1646,7 +1646,7 @@ func TestOneOfTag__BadInputsForStrings(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly string no args", func(t *testing.T) {
 		a := CustomOneofWrongString{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
 		}
@@ -1663,7 +1663,7 @@ func TestOneOfTag__BadInputsForStrings(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly string no args or even colon separator", func(t *testing.T) {
 		a := CustomOneofWrongString1{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
 		}
@@ -1680,7 +1680,7 @@ func TestOneOfTag__BadInputsForStrings(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly string invalid argument separator", func(t *testing.T) {
 		a := CustomOneofWrongString2{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
 		}
@@ -1697,7 +1697,7 @@ func TestOneOfTag__BadInputsForStrings(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly string only one argument", func(t *testing.T) {
 		a := CustomWrongString3{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
 		}
@@ -1714,7 +1714,7 @@ func TestOneOfTag__BadInputsForStrings(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly string duplicate separator", func(t *testing.T) {
 		a := CustomWrongString4{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
 		}
@@ -1735,7 +1735,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	t.Run("should error for int64 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeInt64Wrong{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error but got nil")
 		}
@@ -1752,7 +1752,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	t.Run("should error for int32 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeInt32Wrong{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error but got nil")
 		}
@@ -1769,7 +1769,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	t.Run("should error for int16 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeInt16Wrong{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error but got nil")
 		}
@@ -1786,7 +1786,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	t.Run("should error for int8 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeInt8Wrong{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error but got nil")
 		}
@@ -1803,7 +1803,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	t.Run("should error for uint64 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeUint64Wrong{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error but got nil")
 		}
@@ -1820,7 +1820,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	t.Run("should error for uint32 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeUint32Wrong{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error but got nil")
 		}
@@ -1837,7 +1837,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	t.Run("should error for uint16 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeUint16Wrong{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error but got nil")
 		}
@@ -1854,7 +1854,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	t.Run("should error for uint8 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeUint8Wrong{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error but got nil")
 		}
@@ -1871,7 +1871,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly no args int", func(t *testing.T) {
 		a := CustomOneofWrongInt{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
 		}
@@ -1888,7 +1888,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly int invalid argument separator", func(t *testing.T) {
 		a := CustomOneofWrongInt2{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
 		}
@@ -1905,7 +1905,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly int invalid argument type", func(t *testing.T) {
 		a := CustomOneofWrongInt3{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Fatal("expected error, but got no error")
 		}
@@ -1922,7 +1922,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly int only one argument", func(t *testing.T) {
 		a := CustomWrongInt4{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Fatal("expected error, but got no error")
 		}
@@ -1939,7 +1939,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	t.Run("errors when tag is not used correctly int only one argument", func(t *testing.T) {
 		a := CustomWrongInt5{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Fatal("expected error, but got no error")
 		}
@@ -1956,7 +1956,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	t.Run("passing a negative int to an unsigned int should cause error", func(t *testing.T) {
 		a := CustomTypeNegativeUnsigned{}
-		err := FakeData(&a)
+		err := FakeData(&a, true)
 		if err == nil {
 			t.Errorf("expected error but got nil")
 		}
@@ -1972,7 +1972,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 func TestFakeData3(t *testing.T) {
 	t.Run("test nil pointer", func(t *testing.T) {
 		var a *int
-		err := FakeData(a)
+		err := FakeData(a, true)
 		if err == nil {
 			t.Errorf("expected error but got nil")
 		}

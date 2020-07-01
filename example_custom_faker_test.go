@@ -53,7 +53,7 @@ func CustomGenerator() {
 func Example_customFaker() {
 	CustomGenerator()
 	var sample Sample
-	_ = faker.FakeData(&sample)
+	_ = faker.FakeData(&sample, true)
 	fmt.Printf("%+v", sample)
 	// Output:
 	// {ID:43 Gondoruwo:{Name:Power Locatadata:324} Danger:danger-ranger UUID:[0 8 7 2 3]}
