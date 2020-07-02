@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bxcodec/faker/v3/support/slice"
+	"github.com/mcmakler/faker/v3/support/slice"
 )
 
 var (
@@ -1121,9 +1121,9 @@ func randomSliceAndMapSize(allowZero bool) int {
 		return 0
 	}
 	if allowZero {
-		return rand.Intn(randomSize)+1
+		return rand.Intn(randomSize)
 	}
-	return rand.Intn(randomSize)
+	return rand.Intn(randomSize)+1
 }
 
 func randomElementFromSliceString(s []string) string {
