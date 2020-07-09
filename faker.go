@@ -27,7 +27,7 @@ var (
 	//Sets the boundary for random value generation. Boundaries can not exceed integer(4 byte...)
 	nBoundary = numberBoundary{start: 0, end: 100}
 	//Sets the random size for slices and maps.
-	randomSize = 100
+	randomSize = 10
 	// Sets the single fake data generator to generate unique values
 	generateUniqueValues = false
 	// Unique values are kept in memory so the generator retries if the value already exists
